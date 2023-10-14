@@ -37,27 +37,52 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final slideShowMovies = ref.watch(moviesSlideshowProvider);
 
-    return Column(
-      children: [
-        const CustomAppbar(),
-        // Expanded(
-        //   child: ListView.builder(
-        //     itemCount: nowPlayingMovies.length,
-        //     itemBuilder: (context, index) {
-        //       final movie = nowPlayingMovies[index];
-        //       return ListTile(
-        //         title: Text(movie.title),
-        //       );
-        //     },
-        //   ),
-        // )
-        MoviesSlideshow(movies: slideShowMovies),
-        MovieHorizontalListview(
-          movies: nowPlayingMovies,
-          title: "Em cartaz",
-          subTitle: "Sábado 07",
-        )
-      ],
-    );
+    // SingleChildScrollView
+    return CustomScrollView(slivers: [
+      const SliverAppBar(
+        floating: true,
+        flexibleSpace: FlexibleSpaceBar(title: CustomAppbar()),
+      ),
+      SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+        return Column(
+          children: [
+            // const CustomAppbar(),
+            MoviesSlideshow(movies: slideShowMovies),
+            MovieHorizontalListview(
+              movies: nowPlayingMovies,
+              title: "Em cartaz",
+              subTitle: "Sábado 14",
+              loadNextPage: () =>
+                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
+            ),
+            MovieHorizontalListview(
+              movies: nowPlayingMovies,
+              title: "Em breve",
+              subTitle: "Neste mês",
+              loadNextPage: () =>
+                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
+            ),
+            MovieHorizontalListview(
+              movies: nowPlayingMovies,
+              title: "Populares",
+              // subTitle: "Neste mês",
+              loadNextPage: () =>
+                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
+            ),
+            MovieHorizontalListview(
+              movies: nowPlayingMovies,
+              title: "Recomendados",
+              subTitle: "Desde sempre",
+              loadNextPage: () =>
+                  ref.read(nowPlayingMoviesProvider.notifier).loadNextPage(),
+            ),
+            const SizedBox(
+              height: 10,
+            )
+          ],
+        );
+      }, childCount: 1))
+    ]);
   }
 }
